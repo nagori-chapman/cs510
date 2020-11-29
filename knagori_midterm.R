@@ -4,6 +4,7 @@
 #Preliminaries
 #We'll use the data file `midterm-dataset.csv`, which should be in the same directory as this markdown file (which should also be your working directory). It is a data frame of expenditures by household from the consumer expenditure survey
 
+#The package script is based on stackoverflow recommendations to install missing packages.
 list.of.packages <- c("ggplot2", "plyr", "reshape2", "splines", "boot", "MASS", "broom")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
 if(length(new.packages)) install.packages(new.packages)
@@ -75,7 +76,7 @@ return( data.melt )
 
 
 # The first step will be to load the data file. 
-# The focus of the analysis will be to look at living costs when compared to age of the interviewee 
+# The focus of the analysis will be to look at healthcare costs when compared to age of the interviewee 
 
 # Load the data file
 demographic_dataset = read.csv(file = 'dataset/midterm-dataset.csv', header = TRUE)
@@ -97,7 +98,7 @@ demographic_subset <- demographic_subset.1[-which(demographic_subset.1$age.inter
 agetohealthcost.subset.plot <- ggplot(data=demographic_subset, mapping=aes(x=age.interviewee, y=healthcare)) + geom_point()
 agetohealthcost.subset.plot + geom_smooth(method='lm')+ 
 labs(x = 'Interview Age', y='Healthcare')
-#Removing the extremeties maintained a similar trend in terms of cost to age increase similarly
+#Removing the extremeties maintained a similar trend in terms of cost to age increase similarly.
 
 
 #Cross Validation
@@ -124,6 +125,7 @@ ggplot(data = residualsqq.subset, mapping=aes(sample = resid, color = age.interv
 
 ggplot(data = residualsqq.subset, mapping=aes(sample = resid, color = fitted.cat)) + stat_qq(distribution=qunif) + labs(x = 'quantiles', y = 'residual log healthcare', title = 'Quantile Plot, Residual Log Healthcare')
 #Create qq plots to compare more clearly
+#The qq plots will look clustered inside of the plot viewing window in RStudio. For better viewing I suggest using the zoom button to pop it out.
 QQ.df = ddply(residualsqq.subset, 'age.interviewee.cat', Find.QQ, column.name ="resid", y = residualsqq.subset$resid)
 QQ2.df = ddply(residualsqq.subset, 'fitted.cat', Find.QQ, column.name = "resid", y = residualsqq.subset$resid)
 
