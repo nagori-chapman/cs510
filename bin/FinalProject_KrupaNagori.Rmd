@@ -91,7 +91,7 @@ data.melt = melt(data.augment, id.vars= x, measure.vars = c('q1', 'q2', 'q3', 'q
 return( data.melt )
 }
 ```
-
+The first step of starting the analysis is to the load the data. The dataset utilized in this project is a deemographic data set that breakdown information by factors such as age, income, cost of food, cost of healthcare, and etc. As mentioned above the focus of this analysis is the cost of healthcare as associated with age. The data is in a simple csv file and does contain a header therefore we use the read.csv function and set header = True so that it is included appropriately in the dataframe. 
 ```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 
 # The first step will be to load the data file. 
