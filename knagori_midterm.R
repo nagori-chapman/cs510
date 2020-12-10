@@ -2,7 +2,9 @@
 #Krupa Nagori
 
 #Preliminaries
-#We'll use the data file `midterm-dataset.csv`, which should be in the same directory as this markdown file (which should also be your working directory). It is a data frame of expenditures by household from the consumer expenditure survey
+#We'll use the data file `midterm-dataset.csv`
+# The file should be in the same directory as this markdown file (which should also be your working directory). 
+#It is a data frame of expenditures by household from the consumer expenditure survey
 
 #The package script is based on stackoverflow recommendations to install missing packages.
 list.of.packages <- c("ggplot2", "plyr", "reshape2", "splines", "boot", "MASS", "broom")
@@ -114,7 +116,9 @@ ggplotcv.subset = augment(crossvalidationmodel, data=crossvalidation.subset)
 #generate the s-l plot
 ggplot(data = ggplotcv.subset, mapping=aes(x = .fitted, y = sqrt(abs(.resid)))) + geom_point(size = 1) + geom_smooth()
 
-#Plot the residuals against the predicted values to see if they look identically distributed. Divide `age.interviewee` and `.fitted` into groups, and use quantile plots or QQ plots to see if the residuals in each group look identically distributed. Do they?
+#Plot the residuals against the predicted values to see if they look identically distributed. 
+#Divide `age.interviewee` and `.fitted` into groups
+#use quantile plots or QQ plots to see if the residuals in each group look identically distributed.
 
 #generate a subset from the previous data use cut to group data
 residuals.subset = mutate(ggplotcv.subset, pred = predict(crossvalidationmodel), resid = resid(crossvalidationmodel), age.interviewee.cat = cut_number(age.interviewee, n = 10))
@@ -133,4 +137,5 @@ ggplot(data = QQ.df, mapping=aes(x = q1, y = q2)) + geom_point() + geom_abline()
 
 ggplot(data = QQ2.df, mapping=aes(x = q1, y = q2)) + geom_point() + geom_abline() + facet_wrap('fitted.cat', nrow = 2) + labs(title='QQ Plot, grouped vs pooled residuals')
 
-#The QQ plot help signficantly in trying to see if the residuals in each group look identically distributed.Based on the plot generated the residuals in each group look identically distributed.
+#The QQ plot help signficantly in trying to see if the residuals in each group look identically distributed.
+#Based on the plot generated the residuals in each group look identically distributed.
