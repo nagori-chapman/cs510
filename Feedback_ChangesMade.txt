@@ -21,7 +21,17 @@ This file to list the feedback and suggested provided in the midterm review and 
 ->
 
 6. The project’s file system could easily be made to conform to the organizational recommendations in Wilson et al 2017 by placing files in the appropriate directories. 
-->
+-> For this I checked Wilson et al 2017 and posted the list below to follow.
+    Project organization:
+        Put each project in its own directory, which is named after the project.
+        -> The project is currently foldered under midterm submitted. No adjustments made
+        Put text documents associated with the project in the doc directory.
+        -> Created a doc folder and moved all documentation there.
+        Put raw data and metadata in a data directory and files generated during cleanup and analysis in a results directory.
+        Put project source code in the src directory.
+        Put external scripts or compiled programs in the bin directory.
+        Name all files to reflect their content or function.
+-> For this, I created add to the r script to create a results folder to save the images to. 
 
 7. There are a few lines of code which should be broken up into multiple lines, such as lines 5, 42, 89, 92, 98, 109, 115-134. 
 -> This feedback is similar to #3 and was addressed in the same way to break up comments into multple lines as well as change the location of some comments into the explanation section of the Rmarkdown file.
