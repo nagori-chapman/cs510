@@ -121,9 +121,8 @@ demographic_subset <- demographic_subset.1[-which(demographic_subset.1$age.inter
 agetohealthcost.subset.plot <- ggplot(data=demographic_subset, mapping=aes(x=age.interviewee, y=healthcare)) + geom_point()
 agetohealthcost.subset.plot + geom_smooth(method='lm')+ 
 labs(x = 'Interview Age', y='Healthcare')
-#Removing the extremeties maintained a similar trend in terms of cost to age increase similarly
 ```
-The next step is cross validation as mentioned above to ensure that linear model is fitted correctly using k-fold cross validation. The validation step uses the functions created above to accomplish the task.  
+Removing the extremeties maintained a similar trend in terms of cost to age increase similarly. The next step is cross validation as mentioned above to ensure that linear model is fitted correctly using k-fold cross validation. The validation step uses the functions created above to accomplish the task.  
 
 ```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #Cross Validation
@@ -139,7 +138,7 @@ ggplotcv.subset = augment(crossvalidationmodel, data=crossvalidation.subset)
 #generate the s-l plot
 ggplot(data = ggplotcv.subset, mapping=aes(x = .fitted, y = sqrt(abs(.resid)))) + geom_point(size = 1) + geom_smooth()
 ```
-After cross validation the next step is to plot the residuals against the predicted values to see if they look identically distributed. To do this we divide `age.interviewee` and `.fitted` into groups, and use quantile plots or QQ plots to see if the residuals in each group look identically distributed.  
+After cross validation the next step is to plot the residuals against the predicted values to see if they look identically distributed. To do this we divide `age.interviewee` and `.fitted` into groups, and use quantile plots or QQ plots to see if the residuals in each group look identically distributed. The QQ plot help signficantly in trying to see if the residuals in each group look identically distributed.
 
 ```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #generate a subset from the previous data use cut to group data
@@ -158,12 +157,13 @@ ggplot(data = QQ.df, mapping=aes(x = q1, y = q2)) + geom_point() + geom_abline()
 
 ggplot(data = QQ2.df, mapping=aes(x = q1, y = q2)) + geom_point() + geom_abline() + facet_wrap('fitted.cat', nrow = 2) + labs(title='QQ Plot, grouped vs pooled residuals')
 
-#The QQ plot help signficantly in trying to see if the residuals in each group look identically distributed.Based on the plot generated the residuals in each group look identically distributed.
 ```
+
 #### Results
 #### Conclusion
 
 Future work from this project would be to implement ther the methodology to further analyze different facets of the demographic data reusing the same functions against different pairings or groups. For work utilizing these scripts would be to compare average incomes groups against average healthcare costs grouped by age to determine if costs are affected by both age, income, and suggested potential access to healthcare. A second comparison would be to compare lifestyle from cost of housing to food and region of living to cost of healthcare. These additional facets wold provide greater context as cost of living varies from region to region but also overall household costs can create a more wholistic picture. 
+
 #### References
 1. Vaitkevicius, P V, et al. “Effects of Age and Aerobic Capacity on Arterial Stiffness in Healthy Adults.” Circulation, 1 Oct. 1993, www.ahajournals.org/doi/abs/10.1161/01.CIR.88.4.1456. 
 2. 
