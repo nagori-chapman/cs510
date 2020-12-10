@@ -24,14 +24,23 @@ This file to list the feedback and suggested provided in the midterm review and 
 -> For this I checked Wilson et al 2017 and posted the list below to follow.
     Project organization:
         Put each project in its own directory, which is named after the project.
+        
         -> The project is currently foldered under midterm submitted. No adjustments made
         Put text documents associated with the project in the doc directory.
         -> Created a doc folder and moved all documentation there.
+        
         Put raw data and metadata in a data directory and files generated during cleanup and analysis in a results directory.
+        -> For this, I created add to the r script to create a results folder to save the images to. 
+        -> Data directory currently exists
+
         Put project source code in the src directory.
+        -> moved r code into srs directory
+        
         Put external scripts or compiled programs in the bin directory.
+        -> placed rmarkdown in bin directory
+        
         Name all files to reflect their content or function.
--> For this, I created add to the r script to create a results folder to save the images to. 
+        -> No additional changes for this
 
 7. There are a few lines of code which should be broken up into multiple lines, such as lines 5, 42, 89, 92, 98, 109, 115-134. 
 -> This feedback is similar to #3 and was addressed in the same way to break up comments into multple lines as well as change the location of some comments into the explanation section of the Rmarkdown file.
