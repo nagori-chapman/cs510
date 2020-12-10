@@ -6,6 +6,9 @@
 # The file should be in the same directory as this markdown file (which should also be your working directory). 
 #It is a data frame of expenditures by household from the consumer expenditure survey
 
+#Set working directory
+setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
+
 #The package script is based on stackoverflow recommendations to install missing packages.
 list.of.packages <- c("ggplot2", "plyr", "reshape2", "splines", "boot", "MASS", "broom")
 new.packages <- list.of.packages[!(list.of.packages %in% installed.packages()[,"Package"])]
