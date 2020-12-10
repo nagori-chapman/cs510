@@ -1,0 +1,43 @@
+This file to list the feedback and suggested provided in the midterm review and changes made to respond the suggestions.
+
+1. Run line by line and was unable to script
+-> For this, I switched to an rmarkdown file for the final project that will knit the project into an html file. This will bypass the line by line issue.
+
+2. I am having some trouble interpreting the output plots and the significance of the variables they compare and the trends they show. Perhaps a rmd report with more thorough explanations of the data and output would be useful.
+-> This feedback made sense. The code provided in the midterm was bare bones in terms of explaining the results and more explained what each step should do.
+-> Based on this feedback I created a methodology and results section in the rmarkdown file. The methodology section breaks up the script to provide better explanations of the ouput plots, trends, and variables. I further go over the overall meaning in the results section.
+
+3.  The code could be made much clearer by breaking long comments into multiple lines. Right now it is a bit difficult to read some comments since it requires horizontal scrolling to read the whole comment. An example is line 117 of knagori_midterm.R. Additionally, some comments describe the implementation rather than the purpose of the code. Some examples are lines 22 and 106. 
+-> This feedback makes sense when looking back at the file. Multiple sentances are placed in one comment. 
+-> Based on this feedback I updated the original R file but also applied the same to the rmarkdown. In the R markdown I removed some of the comments from the code and implemented them in the explanation portion. The parts that remained as a hashed comment I made sure to create better breakdowns. 
+
+
+4. there are some comments which would be better placed in an rmd report explaining the findings. These comments describe trends in the output rather than explain the purpose and functionality of the code. Some examples are lines 5, 92, 101, 117(this comment also contains a question, should be avoided), 136., I was able to follow along with the comments however, I wouldn’t have noticed it if sourcing the code. 
+-> This comment is cimilar to #2 and was addressed in the same way. I switched to an rmarkdown to better explain my findings. 
+
+
+5.  Your code should contain tests to make sure it functions correctly. Please remedy this before the final. 
+->
+
+6. The project’s file system could easily be made to conform to the organizational recommendations in Wilson et al 2017 by placing files in the appropriate directories. 
+->
+
+7. There are a few lines of code which should be broken up into multiple lines, such as lines 5, 42, 89, 92, 98, 109, 115-134. 
+-> This feedback is similar to #3 and was addressed in the same way to break up comments into multple lines as well as change the location of some comments into the explanation section of the Rmarkdown file.
+
+8. There is inconsistent use of “=” versus “<-” for assignment through the document, such as in lines 9 and 28. 
+-> To address this feedback I went through and changed all = to <- for better consistency throughout the document
+
+9. The code could be made much more visually appealing by indenting code when inside of a curly brace.
+->
+
+10. Please include ggsave statements to save your plots into a results folder so that a user can actually view all of the results without digging through the code for them. 
+->
+
+11. Some spots don’t conform to style guide (lots of = where <- should be in assigning values, lack of whitespace around = and <-, etc). 
+-> This feedback is the same as #8 and was addressed in the same way.
+
+12. It would be better if the test (which works great) could have some output indicating to the user that the model passes.
+-> This feedback is the same as #5 is addressed in the same way.
+
+
