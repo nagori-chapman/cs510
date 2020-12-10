@@ -36,7 +36,7 @@ library(broom)
 #Random number generator with set to give the same output every time.
 set.seed(1)
 ```
-For the analysis three functions were created.
+For the analysis three functions were created. The first function glm.cv.loop is used to take the imported data and create a fitted spline model. To ensure data accuracy within the function and that the data over or under fitted k-fold cross validation is built in to the function. K in this instance is mean to represent the number of groups the sample will be split into. Cross validation then uses the k number to resample and test the data. 
 ```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #Functions
 glm.cv.loop = function(data, formula.text, DF.vector, K=10) {
