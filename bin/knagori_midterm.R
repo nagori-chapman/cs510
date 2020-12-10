@@ -10,8 +10,8 @@
 setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
 
 #Set and create results folder
-img_path="results"
-dir.create(img_path)
+#img_path="midterm-submitted/results"
+#dir.create(img_path)
 
 #The package script is based on stackoverflow recommendations to install missing packages.
 list.of.packages <- c("ggplot2", "plyr", "reshape2", "splines", "boot", "MASS", "broom")
