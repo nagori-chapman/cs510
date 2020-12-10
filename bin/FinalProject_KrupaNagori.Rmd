@@ -71,7 +71,9 @@ q2 = quantile(y, probs=probs )
 # return them as a data frame
 return( data.frame(q1 = q1, q2 = q2))
 }
-
+```
+The last function utilized is Pool.Residuals is a function used as a secondary check method in additionto cross validation. The function is used a regression method to create multiple quantiles of both grouped and pooled residuals to determine variance in the data. 
+```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 Pool.Residuals = function (data.augment, x, qvec = c(.05, .15, .5, .85, .95)) {
 require(plyr)
 require(reshape2)
