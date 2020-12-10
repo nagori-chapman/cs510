@@ -1,7 +1,8 @@
 This file to list the feedback and suggested provided in the midterm review and changes made to respond the suggestions.
 
-1. Run line by line and was unable to script
+1. Run line by line and was unable to script,  I had to reconfigure the working directory
 -> For this, I switched to an rmarkdown file for the final project that will knit the project into an html file. This will bypass the line by line issue.
+-> I added setwd(dirname(rstudioapi::getActiveDocumentContext()$path)) to make sure the user doesn't have to change the working directory manually. 
 
 2. I am having some trouble interpreting the output plots and the significance of the variables they compare and the trends they show. Perhaps a rmd report with more thorough explanations of the data and output would be useful.
 -> This feedback made sense. The code provided in the midterm was bare bones in terms of explaining the results and more explained what each step should do.
