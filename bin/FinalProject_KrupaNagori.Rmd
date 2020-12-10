@@ -15,7 +15,7 @@ output: html_document
   The next steps based on this analysis would be to analyze the other demographic data contained in the data set to gain a bigger picture of age, income, and lifestyle costs as compared to healthcare costs. 
 
 #### Methodology
-The analysis requires 7 packages. ggplot2 is a tidyverse visualization package that is utilized here to generate the graphs. plyr is utilized to breakdown the demographic data set into necessary subsets. reshape2 is used in conjuction with plyr to shape the data into the necessary frame for implementation with the functions. boot, broom, splines and MASS are used for the statistical analysis portion of project and to graph the results. Lastly, a random generator is added to be used with the statistical formulations.
+The analysis requires 7 packages. ggplot2 is a tidyverse visualization package that is utilized here to generate the graphs. plyr is utilized to breakdown the demographic data set into necessary subsets. reshape2 is used in conjuction with plyr to shape the data into the necessary frame for implementation with the functions. boot, broom, splines and MASS are used for the statistical analysis portion of project and to graph the results. Lastly, the command `set.seed(x)`, where `x` is any number, fixes the random number generator to give the same output every time. This is to ensure that the cross validation results will be the same each time, since a random sample is taken.
 
 ```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #Preliminaries
@@ -33,7 +33,7 @@ library(boot)
 library(MASS)
 library(broom)
 
-#The command `set.seed(x)`, where `x` is any number, fixes the random number generator to give the same output every time.
+#Random number generator with set to give the same output every time.
 set.seed(1)
 ```
 For the analysis three functions were created.
