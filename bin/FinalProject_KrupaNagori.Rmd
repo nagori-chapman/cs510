@@ -57,8 +57,9 @@ cv.plot = ggplot(data = data.out, mapping=aes(x=df, y=cv.scores)) + geom_point()
 # return a list containing the scores and the plot
 return( list(scores = cv.scores, plot = cv.plot))
 }  
-
-
+```
+The second function Find.QQ used to find if the two sets of data contains a common distribution. The qq plots function is created to check the distribution of points. If the points results in a straight line distribution at about 45* and the points are near that the line the data contains a common distribution. If they do not fall on that line that means the data contains a skew.
+```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 Find.QQ = function(.data, column.name, y) {
 # how many quantiles are we plotting?
 n.pts = min( length(.data[, column.name]), length(y))
