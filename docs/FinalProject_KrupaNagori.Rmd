@@ -97,7 +97,7 @@ The first step of starting the analysis is to the load the data. The dataset uti
 # The focus of the analysis will be to look at healthcare costs when compared to age of the interviewee 
 
 # Load the data file
-demographic_dataset <- read.csv(file = 'dataset/midterm-dataset.csv', header = TRUE)
+demographic_dataset <- read.csv(file = '../dataset/midterm-dataset.csv', header = TRUE)
 ```
 After the data has been imported lm is used to create a simple linear model. After the linear model as been created ggplot is used to create a graph of linear model. Doing this will provide a first picture of the data and give initial indication of extreme data points or trends to be aware of when qualifying the data. 
 ```{r echo = FALSE, message = FALSE, warning = FALSE, fig.width=8, fig.height=6, dpi=100, fig.align='center'}
