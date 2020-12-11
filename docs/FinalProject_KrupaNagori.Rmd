@@ -100,7 +100,7 @@ The first step of starting the analysis is to the load the data. The dataset uti
 demographic_dataset = read.csv(file = 'dataset/midterm-dataset.csv', header = TRUE)
 ```
 After the data has been imported lm is used to create a simple linear model. After the linear model as been created ggplot is used to create a graph of linear model. Doing this will provide a first picture of the data and give initial indication of extreme data points or trends to be aware of when qualifying the data. 
-```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
+```{r echo = FALSE, warning = FALSE, fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #First create a simple lm with healthcare as a function of age.interviewee
 agetohealthcost = lm(formula = healthcare ~ age.interviewee, data = demographic_dataset)
 agetohealthcost
@@ -108,10 +108,11 @@ agetohealthcost
 agetohealthcost.plot = ggplot(data=demographic_dataset, mapping=aes(x=age.interviewee, y=healthcare)) + geom_point()
 agetohealthcost.plot + geom_smooth(method='lm') + 
 labs(x = 'Interview Age', y='Healthcare')
+ggsave(agetohealthcost.plot, filename = "../results/agetohealthcost.png")
 ```
 The resulting graph shows displays age on the x axis with healthcare on the y-axis. The graph shows that the people of a younger age have lower cost of healthcare and as ages increase the healthcare costs appear to increase as well. However, the graph also shows some outlier with a gap over the 86 and under 1. Removing these outliers and applying them as qualitification to create a subset would help to see if the trend is affected by the outliers. 
 
-```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
+```{r echo = FALSE, warnings = FALSE, fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 
 #Here apply the qualifications
 demographic_subset.1 <- demographic_dataset[which(demographic_dataset$healthcare > 1),]
@@ -123,7 +124,7 @@ labs(x = 'Interview Age', y='Healthcare')
 ```
 Removing the extremeties maintained a similar trend in terms of cost to age increase similarly. The next step is cross validation as mentioned above to ensure that linear model is fitted correctly using k-fold cross validation. The validation step uses the functions created above to accomplish the task.  
 
-```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
+```{r echo = FALSE,warnings = FALSE, fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #Cross Validation
 #This step uses a log to fit a natural spline to your data for cross validation. 
 #Mutate to add the log to the dataframe
@@ -139,7 +140,7 @@ ggplot(data = ggplotcv.subset, mapping=aes(x = .fitted, y = sqrt(abs(.resid)))) 
 ```
 After cross validation the next step is to plot the residuals against the predicted values to see if they look identically distributed. To do this we divide `age.interviewee` and `.fitted` into groups, and use quantile plots or QQ plots to see if the residuals in each group look identically distributed. The QQ plot help signficantly in trying to see if the residuals in each group look identically distributed.
 
-```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
+```{r echo = FALSE, warnings = FALSE, fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #generate a subset from the previous data use cut to group data
 residuals.subset = mutate(ggplotcv.subset, pred = predict(crossvalidationmodel), resid = resid(crossvalidationmodel), age.interviewee.cat = cut_number(age.interviewee, n = 10))
 residualsqq.subset = mutate(residuals.subset, pred = predict(crossvalidationmodel), resid = resid(crossvalidationmodel), fitted.cat = cut_number(.fitted, n = 10))
