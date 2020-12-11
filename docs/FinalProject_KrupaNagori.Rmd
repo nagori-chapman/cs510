@@ -9,7 +9,7 @@ author: Krupa Nagori
 output: html_document
 ---
 #### Introduction
-  The cost of healthcare is a common conversation in the modern household and more so in recent times due to the 2020 pandemic. A large part of these discussions often circles around age and pre-existing conditions. A multitude of studies suggest that as age increases there is a decline in health from cognitive decline to decrease in physical activity (1). This would suggest that as people age their need for healthcare would increase as increased support would be needed to deal with increasing health concerns. However, generally as people approach older ages they also begin to enter retirement and rely upon social security and limited income. The goal of this paper is to develop and methodology to study population data to compare the cost of living and specifically the scope of this project is narrowed to healthcare per person against the age of the person. 
+  The cost of healthcare is a common conversation in the modern household and more so in recent times due to the 2020 pandemic. A large part of these discussions often circles around age and pre-existing conditions. A multitude of studies suggest that as age increases there is a decline in health from cognitive decline to decrease in physical activity (3,6). This would suggest that as people age their need for healthcare would increase as increased support would be needed to deal with increasing health concerns. However, generally as people approach older ages they also begin to enter retirement and rely upon social security and limited income. The goal of this paper is to develop and methodology to study population data to compare the cost of living and specifically the scope of this project is narrowed to healthcare per person against the age of the person. 
   The methodology utilized in the project is to create functions to statistically analyze demgraphic data for healthcare cost against age. The functions are then implemented to generate a series of plots displaying the distribution of costs of healthcare spread across the age spectrum. These results are then cross validated utilizing residuals to determine the veracity of the data. The pooled residuals are graphed in qq plots to deermine if the residuals in each group are identically distrubted. Based on the results we see that healthcare costs increase by age even when excluding extreme data points. 
   The next steps based on this analysis would be to analyze the other demographic data contained in the data set to gain a bigger picture of age, income, and lifestyle costs as compared to healthcare costs. 
 
@@ -121,17 +121,18 @@ agetohealthcost.subset.plot + geom_smooth(method='lm')+
 labs(x = 'Interview Age', y='Healthcare')
 ggsave(agetohealthcost.plot, filename = "../results/agetohealthcost.png")
 ```
-Removing the extremeties maintained a similar trend in terms of cost to age increase similarly. The next step is cross validation as mentioned above to ensure that linear model is fitted correctly using k-fold cross validation. The validation step uses the functions created above to accomplish the task.  
+Removing the extremeties maintained a similar trend in terms of cost to age increase similarly. The plot mimics the first plot in that the interviewee of younger age lowers costs and number increases as age increases. However, there is an abrupt change in the distribution of expenditures at any particular age. The age of change is between 80 and 90. 
+The next step is cross validation as mentioned above to ensure that linear model is fitted correctly using k-fold cross validation. The validation step uses the functions created above to accomplish the task.  For this cross validation a log or power transformation can be used to fit a natural spline to the data. In this case we utilized a log transformation. The s-1 plot is used to check if the variance of the rediuals is somewhatconstant as a function of predicted values.
 
 ```{r echo = FALSE,message = FALSE, warning = FALSE, fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #Cross Validation
 #This step uses a log to fit a natural spline to your data for cross validation. 
 #Mutate to add the log to the dataframe
-crossvalidation.subset = mutate(demographic_subset, log.healthcare = log(healthcare))
+crossvalidation.subset <- mutate(demographic_subset, log.healthcare = log(healthcare))
 #Use the function given to us above
-out = glm.cv.loop(crossvalidation.subset, formula.text = "log.healthcare ~ ns(age.interviewee, df=DF)", DF.vector = 1:30)
+out <- glm.cv.loop(crossvalidation.subset, formula.text = "log.healthcare ~ ns(age.interviewee, df = DF)", DF.vector = 1:30)
 
-crossvalidationmodel = lm(formula = healthcare ~ age.interviewee, data = crossvalidation.subset)
+crossvalidationmodel <- lm(formula = healthcare ~ age.interviewee, data = crossvalidation.subset)
 #create a new subset for the s-l plot
 ggplotcv.subset = augment(crossvalidationmodel, data=crossvalidation.subset)
 #generate the s-l plot
@@ -140,12 +141,12 @@ agetohealthcost_subset.plot
 ggsave(agetohealthcost.plot, filename = "../results/agetohealthcost_subset.png")
 
 ```
-After cross validation the next step is to plot the residuals against the predicted values to see if they look identically distributed. To do this we divide `age.interviewee` and `.fitted` into groups, and use quantile plots or QQ plots to see if the residuals in each group look identically distributed. The QQ plot help signficantly in trying to see if the residuals in each group look identically distributed.
+After cross validation the next step is to plot the residuals against the predicted values to see if they look identically distributed. To do this we divide `age.interviewee` and `.fitted` into groups, and use quantile plots or QQ plots to see if the residuals in each group look identically distributed. The QQ plot help signficantly in trying to see if the residuals in each group look identically distributed. 
 
-```{r echo = FALSE, message = FALSE, warning = FALSE, fig.width=8, fig.height=6, dpi=100, fig.align='center'}
+```{r echo = FALSE, message = FALSE, warning = FALSE, fig.width=8, fig.height = 6, dpi = 100, fig.align = 'center'}
 #generate a subset from the previous data use cut to group data
 residuals.subset = mutate(ggplotcv.subset, pred = predict(crossvalidationmodel), resid = resid(crossvalidationmodel), age.interviewee.cat = cut_number(age.interviewee, n = 10))
-residualsqq.subset = mutate(residuals.subset, pred = predict(crossvalidationmodel), resid = resid(crossvalidationmodel), fitted.cat = cut_number(.fitted, n = 10))
+residualsqq.subset <- mutate(residuals.subset, pred = predict(crossvalidationmodel), resid = resid(crossvalidationmodel), fitted.cat = cut_number(.fitted, n = 10))
 
 #plot each of groups to compare
 residuals_age.plot <- ggplot(data = residualsqq.subset, mapping=aes(sample = resid, color = age.interviewee.cat)) + stat_qq(distribution=qunif) + labs(x = 'quantiles', y = 'residual log healthcare', title = 'Quantile Plot, Residual Log Healthcare')
@@ -153,14 +154,17 @@ residuals_age.plot
 ggsave(residuals_age.plot, filename = "../results/residuals_age.png")
 
 
-residuals_fitted.plot <- ggplot(data = residualsqq.subset, mapping=aes(sample = resid, color = fitted.cat)) + stat_qq(distribution=qunif) + labs(x = 'quantiles', y = 'residual log healthcare', title = 'Quantile Plot, Residual Log Healthcare')
+residuals_fitted.plot <- ggplot(data = residualsqq.subset, mapping = aes(sample = resid, color = fitted.cat)) + stat_qq(distribution=qunif) + labs(x = 'quantiles', y = 'residual log healthcare', title = 'Quantile Plot, Residual Log Healthcare')
 residuals_fitted.plot
 ggsave(residuals_fitted.plot, filename = "../results/residuals_age.png")
+```
+The two quantile plots for both age and fitted show similar distribution for all age groups across all quantiles addresses the first test for identical distribution. Another test for this is to organize the plots side by side using qq plots as below. 
 
+```{r echo = FALSE, message = FALSE, warning = FALSE, fig.width=8, fig.height = 6, dpi = 100, fig.align = 'center'}
 
 #Create qq plots to compare more clearly
-QQ.df = ddply(residualsqq.subset, 'age.interviewee.cat', Find.QQ, column.name ="resid", y = residualsqq.subset$resid)
-QQ2.df = ddply(residualsqq.subset, 'fitted.cat', Find.QQ, column.name = "resid", y = residualsqq.subset$resid)
+QQ.df <- ddply(residualsqq.subset, 'age.interviewee.cat', Find.QQ, column.name ="resid", y = residualsqq.subset$resid)
+QQ2.df <- ddply(residualsqq.subset, 'fitted.cat', Find.QQ, column.name = "resid", y = residualsqq.subset$resid)
 
 qq_age.plot <- ggplot(data = QQ.df, mapping=aes(x = q1, y = q2)) + geom_point() + geom_abline() + facet_wrap('age.interviewee.cat', nrow = 2) + labs(title='QQ Plot, grouped vs pooled residuals')
 qq_age.plot 
@@ -170,16 +174,24 @@ qq_fitted.plot <- ggplot(data = QQ2.df, mapping=aes(x = q1, y = q2)) + geom_poin
 qq_fitted.plot
 ggsave(qq_fitted.plot, filename = "../results/qq_fitted.png")
 
-
-
 ```
-
+The QQ plot helps signficantly in determining if they residuals look identical and in this case, based on the plot generated, we see that the residuals in each group look identically distributed. 
 
 #### Conclusion
+The focus of this project was in two parts. The first part is building analysis tools through the creation of function to analyze demographic data. The second part was using the functions created to analyze the cost of healthcare as compared to age. The function created were based on the concept of implementing and testing machine learning. The first steps were to analyze the data utilizing linear models and following steps were testing the models using cross validation methods. The k-folds cross validation method is based on the train and test concept for machine learning modules and can be used to scale up this tool. This means that though the focus on this project was healthcare the same tools can be utilized for future work as listed below. The second part of this project was analyzing the cost of healthcare as compared to age using linear models and log transformations. The results show that the cost of healthcare increases with age with a sharper change after about 64 years old. The cross validation methods showed that the data sets were identically distributed providing veracity to the data. 
 
 Future work from this project would be to implement ther the methodology to further analyze different facets of the demographic data reusing the same functions against different pairings or groups. For work utilizing these scripts would be to compare average incomes groups against average healthcare costs grouped by age to determine if costs are affected by both age, income, and suggested potential access to healthcare. A second comparison would be to compare lifestyle from cost of housing to food and region of living to cost of healthcare. These additional facets wold provide greater context as cost of living varies from region to region but also overall household costs can create a more wholistic picture. 
 
 #### References
 
-1. Vaitkevicius, P V, et al. “Effects of Age and Aerobic Capacity on Arterial Stiffness in Healthy Adults.” Circulation, 1 Oct. 1993, www.ahajournals.org/doi/abs/10.1161/01.CIR.88.4.1456. 
-2. 
+1. alongtest12, et al. “Creating a Sub Directory and Storing Files.” Stack Overflow, 1 May 1968, stackoverflow.com/questions/55682970/creating-a-sub-directory-and-storing-files. 
+
+2. Avorn, Jerry, and Author AffiliationsFrom the Department of Social Medicine and Health Policy and the Division on Aging. “Benefit and Cost Analysis in Geriatric Care - Turning 
+
+3. Age Discrimination into Health Policy: NEJM.” New England Journal of Medicine, www.nejm.org/doi/pdf/10.1056/NEJM198405173102005. 
+
+4.niconico, et al. “Getting Path of an R Script.” Stack Overflow, 1 Sept. 1959, stackoverflow.com/questions/3452086/getting-path-of-an-r-script/35842176. 
+
+5. R_and_Python_noobR_and_Python_noob. “Best Way to Install Required Packages in r.” Stack Overflow, 1 Nov. 1967, stackoverflow.com/questions/52574339/best-way-to-install-required-packages-in-r. 
+
+6. Vaitkevicius, P V, et al. “Effects of Age and Aerobic Capacity on Arterial Stiffness in Healthy Adults.” Circulation, 1 Oct. 1993, www.ahajournals.org/doi/abs/10.1161/01.CIR.88.4.1456. 
