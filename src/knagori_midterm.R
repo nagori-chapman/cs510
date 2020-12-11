@@ -6,9 +6,6 @@
 # The file should be in the same directory as this markdown file (which should also be your working directory). 
 #It is a data frame of expenditures by household from the consumer expenditure survey
 
-#Set working directory
-setwd(dirname(rstudioapi::getActiveDocumentContext()$path))
-
 #Set and create results folder
 #img_path="midterm-submitted/results"
 #dir.create(img_path)
@@ -35,16 +32,16 @@ set.seed(1)
 # Below are the functions used to conduct the analysis
 
 glm.cv.loop = function(data, formula.text, DF.vector, K=10) {
-# make sure boot library is loaded
-require(boot) 
-cv.scores = rep(0, times = length(DF.vector))
-for (DF in DF.vector) {
-# get the fitted model for current value of DF
-spline.model = glm(as.formula(formula.text), data=data)
-# run K-fold cross validation 
-cv <- cv.glm(data=data, glmfit=spline.model, K=K)
-# extract the cross-validation score
-cv.scores[DF] = cv$delta[1]
+  # make sure boot library is loaded
+  require(boot) 
+  cv.scores = rep(0, times = length(DF.vector))
+  for (DF in DF.vector) {
+  # get the fitted model for current value of DF
+  spline.model = glm(as.formula(formula.text), data=data)
+  # run K-fold cross validation 
+  cv <- cv.glm(data=data, glmfit=spline.model, K=K)
+  # extract the cross-validation score
+  cv.scores[DF] = cv$delta[1]
 }
 # make the plot
 data.out <- data.frame(df = DF.vector, cv.scores = cv.scores)
@@ -55,32 +52,32 @@ return( list(scores = cv.scores, plot = cv.plot))
 
 
 Find.QQ <- function(.data, column.name, y) {
-# how many quantiles are we plotting?
-n.pts <- min( length(.data[, column.name]), length(y))
-# which quantiles are we plotting?
-probs = seq(from = 0, to = 1, length.out = n.pts)
-# compute these quantiles for each group
-q1 <- quantile(.data[, column.name], probs= probs)
-q2 <- quantile(y, probs=probs )
-# return them as a data frame
-return( data.frame(q1 = q1, q2 = q2))
+  # how many quantiles are we plotting?
+  n.pts <- min( length(.data[, column.name]), length(y))
+  # which quantiles are we plotting?
+  probs = seq(from = 0, to = 1, length.out = n.pts)
+  # compute these quantiles for each group
+  q1 <- quantile(.data[, column.name], probs= probs)
+  q2 <- quantile(y, probs=probs )
+  # return them as a data frame
+  return( data.frame(q1 = q1, q2 = q2))
 }
 
 Pool.Residuals <- function (data.augment, x, qvec = c(.05, .15, .5, .85, .95)) {
-require(plyr)
-require(reshape2)
-# find the quantiles of the residuals
-resid.quantile <- quantile(x = data.augment$.resid, probs = qvec)
-# add the quantiles of the residuals to the predicted trend
-data.augment = mutate(data.augment, 
-q1 = .fitted + resid.quantile[1],
-q2 = .fitted + resid.quantile[2],                                      
-q3 = .fitted + resid.quantile[3],                                      
-q4 = .fitted + resid.quantile[4],              
-q5 = .fitted + resid.quantile[5])
-# combine all of the quantiles into one column for easier plotting:
-data.melt <- melt(data.augment, id.vars= x, measure.vars = c('q1', 'q2', 'q3', 'q4', 'q5'))
-return( data.melt )
+  require(plyr)
+  require(reshape2)
+  # find the quantiles of the residuals
+  resid.quantile <- quantile(x = data.augment$.resid, probs = qvec)
+  # add the quantiles of the residuals to the predicted trend
+  data.augment = mutate(data.augment, 
+  q1 = .fitted + resid.quantile[1],
+  q2 = .fitted + resid.quantile[2],                                      
+  q3 = .fitted + resid.quantile[3],                                      
+  q4 = .fitted + resid.quantile[4],              
+  q5 = .fitted + resid.quantile[5])
+  # combine all of the quantiles into one column for easier plotting:
+  data.melt <- melt(data.augment, id.vars= x, measure.vars = c('q1', 'q2', 'q3', 'q4', 'q5'))
+  return( data.melt )
 }
 
 
@@ -96,7 +93,7 @@ agetohealthcost <- lm(formula = healthcare ~ age.interviewee, data = demographic
 agetohealthcost
 #from here plot the data to have a starting point
 agetohealthcost.plot <- ggplot(data=demographic_dataset, mapping=aes(x=age.interviewee, y=healthcare)) + geom_point()
-agetohealthcost.plot + geom_smooth(method='lm') + 
+agetohealthcost.plot + geom_smooth(method ='lm') + 
 labs(x = 'Interview Age', y='Healthcare')
 # The resulting graph shows that the people of a younger age have lower cost of healthcare and as ages increase the healthcare costs appear to increase as well. 
 
