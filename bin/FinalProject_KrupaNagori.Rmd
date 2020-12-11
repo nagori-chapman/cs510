@@ -8,16 +8,15 @@ title: CS 520 Final Project
 author: Krupa Nagori
 output: html_document
 ---
-#### Abstract
 #### Introduction
-  The cost of healthcare is a common conversation in the modern household and more so in recent times due to the 2020 pandemic. A large part of these discussions often circles around age and pre-existing conditions. A multitude of studies suggest that as age increases there is a decline in health from cognitive decline to decrease in physical activity (1). This would suggest that as people age their need for healthcare would increase as increased support would be needed to deal with increasing health concerns. However, generally as people approach older ages they also begin to enter retirement and rely upon social security and limited income. The goal of this paper is to develop and methodology to study population data to compare the cost of healthcare per person against the age of the person. 
+  The cost of healthcare is a common conversation in the modern household and more so in recent times due to the 2020 pandemic. A large part of these discussions often circles around age and pre-existing conditions. A multitude of studies suggest that as age increases there is a decline in health from cognitive decline to decrease in physical activity (1). This would suggest that as people age their need for healthcare would increase as increased support would be needed to deal with increasing health concerns. However, generally as people approach older ages they also begin to enter retirement and rely upon social security and limited income. The goal of this paper is to develop and methodology to study population data to compare the cost of living and specifically the scope of this project is narrowed to healthcare per person against the age of the person. 
   The methodology utilized in the project is to create functions to statistically analyze demgraphic data for healthcare cost against age. The functions are then implemented to generate a series of plots displaying the distribution of costs of healthcare spread across the age spectrum. These results are then cross validated utilizing residuals to determine the veracity of the data. The pooled residuals are graphed in qq plots to deermine if the residuals in each group are identically distrubted. Based on the results we see that healthcare costs increase by age even when excluding extreme data points. 
   The next steps based on this analysis would be to analyze the other demographic data contained in the data set to gain a bigger picture of age, income, and lifestyle costs as compared to healthcare costs. 
 
-#### Methodology
+#### Methodology and Results
 The analysis requires 7 packages. ggplot2 is a tidyverse visualization package that is utilized here to generate the graphs. plyr is utilized to breakdown the demographic data set into necessary subsets. reshape2 is used in conjuction with plyr to shape the data into the necessary frame for implementation with the functions. boot, broom, splines and MASS are used for the statistical analysis portion of project and to graph the results. Lastly, the command `set.seed(x)`, where `x` is any number, fixes the random number generator to give the same output every time. This is to ensure that the cross validation results will be the same each time, since a random sample is taken.
 
-```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
+```{r echo = FALSE,fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #Preliminaries
 #Install packages as needed to run analysis
 list.of.packages <- c("ggplot2", "plyr", "reshape2", "splines", "boot", "MASS", "broom")
@@ -37,7 +36,7 @@ library(broom)
 set.seed(1)
 ```
 For the analysis three functions were created. The first function glm.cv.loop is used to take the imported data and create a fitted spline model. To ensure data accuracy within the function and that the data over or under fitted k-fold cross validation is built in to the function. K in this instance is mean to represent the number of groups the sample will be split into. Cross validation then uses the k number to resample and test the data. 
-```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
+```{r echo = FALSE,fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #Functions
 glm.cv.loop = function(data, formula.text, DF.vector, K=10) {
 # make sure boot library is loaded
@@ -59,7 +58,7 @@ return( list(scores = cv.scores, plot = cv.plot))
 }  
 ```
 The second function Find.QQ used to find if the two sets of data contains a common distribution. The qq plots function is created to check the distribution of points. If the points results in a straight line distribution at about 45* and the points are near that the line the data contains a common distribution. If they do not fall on that line that means the data contains a skew. This function is used in conjuction with the pool.residuals function to plot the residuals. 
-```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
+```{r echo = FALSE,fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 Find.QQ = function(.data, column.name, y) {
 # how many quantiles are we plotting?
 n.pts = min( length(.data[, column.name]), length(y))
@@ -73,7 +72,7 @@ return( data.frame(q1 = q1, q2 = q2))
 }
 ```
 The last function utilized is Pool.Residuals is a function used as a secondary check method in additionto cross validation. The function is used a regression method to create multiple quantiles of both grouped and pooled residuals to determine variance in the data. 
-```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
+```{r echo = FALSE,fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 Pool.Residuals = function (data.augment, x, qvec = c(.05, .15, .5, .85, .95)) {
 require(plyr)
 require(reshape2)
@@ -92,7 +91,7 @@ return( data.melt )
 }
 ```
 The first step of starting the analysis is to the load the data. The dataset utilized in this project is a deemographic data set that breakdown information by factors such as age, income, cost of food, cost of healthcare, and etc. As mentioned above the focus of this analysis is the cost of healthcare as associated with age. The data is in a simple csv file and does contain a header therefore we use the read.csv function and set header = True so that it is included appropriately in the dataframe. 
-```{r fig.width=8, fig.height=6, dpi=100, fig.align='center'}
+```{r echo = FALSE,fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 
 # The first step will be to load the data file. 
 # The focus of the analysis will be to look at living costs when compared to age of the interviewee 
@@ -159,11 +158,12 @@ ggplot(data = QQ2.df, mapping=aes(x = q1, y = q2)) + geom_point() + geom_abline(
 
 ```
 
-#### Results
+
 #### Conclusion
 
 Future work from this project would be to implement ther the methodology to further analyze different facets of the demographic data reusing the same functions against different pairings or groups. For work utilizing these scripts would be to compare average incomes groups against average healthcare costs grouped by age to determine if costs are affected by both age, income, and suggested potential access to healthcare. A second comparison would be to compare lifestyle from cost of housing to food and region of living to cost of healthcare. These additional facets wold provide greater context as cost of living varies from region to region but also overall household costs can create a more wholistic picture. 
 
 #### References
+
 1. Vaitkevicius, P V, et al. “Effects of Age and Aerobic Capacity on Arterial Stiffness in Healthy Adults.” Circulation, 1 Oct. 1993, www.ahajournals.org/doi/abs/10.1161/01.CIR.88.4.1456. 
 2. 
