@@ -121,6 +121,7 @@ demographic_subset <- demographic_subset.1[-which(demographic_subset.1$age.inter
 agetohealthcost.subset.plot <- ggplot(data=demographic_subset, mapping=aes(x=age.interviewee, y=healthcare)) + geom_point()
 agetohealthcost.subset.plot + geom_smooth(method='lm')+ 
 labs(x = 'Interview Age', y='Healthcare')
+ggsave(agetohealthcost.plot, filename = "../results/agetohealthcost.png")
 ```
 Removing the extremeties maintained a similar trend in terms of cost to age increase similarly. The next step is cross validation as mentioned above to ensure that linear model is fitted correctly using k-fold cross validation. The validation step uses the functions created above to accomplish the task.  
 
@@ -136,7 +137,10 @@ crossvalidationmodel = lm(formula = healthcare ~ age.interviewee, data = crossva
 #create a new subset for the s-l plot
 ggplotcv.subset = augment(crossvalidationmodel, data=crossvalidation.subset)
 #generate the s-l plot
-ggplot(data = ggplotcv.subset, mapping=aes(x = .fitted, y = sqrt(abs(.resid)))) + geom_point(size = 1) + geom_smooth()
+agetohealthcost_subset.plot <- ggplot(data = ggplotcv.subset, mapping=aes(x = .fitted, y = sqrt(abs(.resid)))) + geom_point(size = 1) + geom_smooth()
+agetohealthcost_subset.plot
+ggsave(agetohealthcost.plot, filename = "../results/agetohealthcost_subset.png")
+
 ```
 After cross validation the next step is to plot the residuals against the predicted values to see if they look identically distributed. To do this we divide `age.interviewee` and `.fitted` into groups, and use quantile plots or QQ plots to see if the residuals in each group look identically distributed. The QQ plot help signficantly in trying to see if the residuals in each group look identically distributed.
 
@@ -146,16 +150,29 @@ residuals.subset = mutate(ggplotcv.subset, pred = predict(crossvalidationmodel),
 residualsqq.subset = mutate(residuals.subset, pred = predict(crossvalidationmodel), resid = resid(crossvalidationmodel), fitted.cat = cut_number(.fitted, n = 10))
 
 #plot each of groups to compare
-ggplot(data = residualsqq.subset, mapping=aes(sample = resid, color = age.interviewee.cat)) + stat_qq(distribution=qunif) + labs(x = 'quantiles', y = 'residual log healthcare', title = 'Quantile Plot, Residual Log Healthcare')
+residuals_age.plot <- ggplot(data = residualsqq.subset, mapping=aes(sample = resid, color = age.interviewee.cat)) + stat_qq(distribution=qunif) + labs(x = 'quantiles', y = 'residual log healthcare', title = 'Quantile Plot, Residual Log Healthcare')
+residuals_age.plot 
+ggsave(residuals_age.plot, filename = "../results/residuals_age.png")
 
-ggplot(data = residualsqq.subset, mapping=aes(sample = resid, color = fitted.cat)) + stat_qq(distribution=qunif) + labs(x = 'quantiles', y = 'residual log healthcare', title = 'Quantile Plot, Residual Log Healthcare')
+
+residuals_fitted.plot <- ggplot(data = residualsqq.subset, mapping=aes(sample = resid, color = fitted.cat)) + stat_qq(distribution=qunif) + labs(x = 'quantiles', y = 'residual log healthcare', title = 'Quantile Plot, Residual Log Healthcare')
+residuals_fitted.plot
+ggsave(residuals_fitted.plot, filename = "../results/residuals_age.png")
+
+
 #Create qq plots to compare more clearly
 QQ.df = ddply(residualsqq.subset, 'age.interviewee.cat', Find.QQ, column.name ="resid", y = residualsqq.subset$resid)
 QQ2.df = ddply(residualsqq.subset, 'fitted.cat', Find.QQ, column.name = "resid", y = residualsqq.subset$resid)
 
-ggplot(data = QQ.df, mapping=aes(x = q1, y = q2)) + geom_point() + geom_abline() + facet_wrap('age.interviewee.cat', nrow = 2) + labs(title='QQ Plot, grouped vs pooled residuals')
+qq_age.plot <- ggplot(data = QQ.df, mapping=aes(x = q1, y = q2)) + geom_point() + geom_abline() + facet_wrap('age.interviewee.cat', nrow = 2) + labs(title='QQ Plot, grouped vs pooled residuals')
+qq_age.plot 
+ggsave(qq_age.plot, filename = "../results/qq_age.png")
 
-ggplot(data = QQ2.df, mapping=aes(x = q1, y = q2)) + geom_point() + geom_abline() + facet_wrap('fitted.cat', nrow = 2) + labs(title='QQ Plot, grouped vs pooled residuals')
+qq_fitted.plot <- ggplot(data = QQ2.df, mapping=aes(x = q1, y = q2)) + geom_point() + geom_abline() + facet_wrap('fitted.cat', nrow = 2) + labs(title='QQ Plot, grouped vs pooled residuals')
+qq_fitted.plot
+ggsave(qq_fitted.plot, filename = "../results/qq_fitted.png")
+
+
 
 ```
 
