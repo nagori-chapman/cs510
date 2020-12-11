@@ -39,73 +39,72 @@ For the analysis three functions were created. The first function glm.cv.loop is
 ```{r echo = FALSE,fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 #Functions
 glm.cv.loop = function(data, formula.text, DF.vector, K=10) {
-# make sure boot library is loaded
-require(boot) 
-cv.scores = rep(0, times = length(DF.vector))
-for (DF in DF.vector) {
-# get the fitted model for current value of DF
-spline.model = glm(as.formula(formula.text), data=data)
-# run K-fold cross validation 
-cv = cv.glm(data=data, glmfit=spline.model, K=K)
-# extract the cross-validation score
-cv.scores[DF] = cv$delta[1]
+  # make sure boot library is loaded
+  require(boot) 
+  cv.scores = rep(0, times = length(DF.vector))
+  for (DF in DF.vector) {
+  # get the fitted model for current value of DF
+  spline.model = glm(as.formula(formula.text), data=data)
+  # run K-fold cross validation 
+  cv <- cv.glm(data=data, glmfit=spline.model, K=K)
+  # extract the cross-validation score
+  cv.scores[DF] = cv$delta[1]
 }
 # make the plot
-data.out = data.frame(df = DF.vector, cv.scores = cv.scores)
-cv.plot = ggplot(data = data.out, mapping=aes(x=df, y=cv.scores)) + geom_point() + labs(x='df', title='Cross Validation Scores')
+data.out <- data.frame(df = DF.vector, cv.scores = cv.scores)
+cv.plot <- ggplot(data = data.out, mapping=aes(x=df, y=cv.scores)) + geom_point() + labs(x='df', title='Cross Validation Scores')
 # return a list containing the scores and the plot
 return( list(scores = cv.scores, plot = cv.plot))
 }  
 ```
 The second function Find.QQ used to find if the two sets of data contains a common distribution. The qq plots function is created to check the distribution of points. If the points results in a straight line distribution at about 45* and the points are near that the line the data contains a common distribution. If they do not fall on that line that means the data contains a skew. This function is used in conjuction with the pool.residuals function to plot the residuals. 
 ```{r echo = FALSE,fig.width=8, fig.height=6, dpi=100, fig.align='center'}
-Find.QQ = function(.data, column.name, y) {
-# how many quantiles are we plotting?
-n.pts = min( length(.data[, column.name]), length(y))
-# which quantiles are we plotting?
-probs = seq(from = 0, to = 1, length.out = n.pts)
-# compute these quantiles for each group
-q1 = quantile(.data[, column.name], probs= probs)
-q2 = quantile(y, probs=probs )
-# return them as a data frame
-return( data.frame(q1 = q1, q2 = q2))
+Find.QQ <- function(.data, column.name, y) {
+  # how many quantiles are we plotting?
+  n.pts <- min( length(.data[, column.name]), length(y))
+  # which quantiles are we plotting?
+  probs = seq(from = 0, to = 1, length.out = n.pts)
+  # compute these quantiles for each group
+  q1 <- quantile(.data[, column.name], probs= probs)
+  q2 <- quantile(y, probs=probs )
+  # return them as a data frame
+  return( data.frame(q1 = q1, q2 = q2))
 }
 ```
 The last function utilized is Pool.Residuals is a function used as a secondary check method in additionto cross validation. The function is used a regression method to create multiple quantiles of both grouped and pooled residuals to determine variance in the data. 
 ```{r echo = FALSE,fig.width=8, fig.height=6, dpi=100, fig.align='center'}
-Pool.Residuals = function (data.augment, x, qvec = c(.05, .15, .5, .85, .95)) {
-require(plyr)
-require(reshape2)
-# find the quantiles of the residuals
-resid.quantile = quantile(x = data.augment$.resid, probs = qvec)
-# add the quantiles of the residuals to the predicted trend
-data.augment = mutate(data.augment, 
-q1 = .fitted + resid.quantile[1],
-q2 = .fitted + resid.quantile[2],                                      
-q3 = .fitted + resid.quantile[3],                                      
-q4 = .fitted + resid.quantile[4],              
-q5 = .fitted + resid.quantile[5])
-# combine all of the quantiles into one column for easier plotting:
-data.melt = melt(data.augment, id.vars= x, measure.vars = c('q1', 'q2', 'q3', 'q4', 'q5'))
-return( data.melt )
+Pool.Residuals <- function (data.augment, x, qvec = c(.05, .15, .5, .85, .95)) {
+  require(plyr)
+  require(reshape2)
+  # find the quantiles of the residuals
+  resid.quantile <- quantile(x = data.augment$.resid, probs = qvec)
+  # add the quantiles of the residuals to the predicted trend
+  data.augment = mutate(data.augment, 
+  q1 = .fitted + resid.quantile[1],
+  q2 = .fitted + resid.quantile[2],                                      
+  q3 = .fitted + resid.quantile[3],                                      
+  q4 = .fitted + resid.quantile[4],              
+  q5 = .fitted + resid.quantile[5])
+  # combine all of the quantiles into one column for easier plotting:
+  data.melt <- melt(data.augment, id.vars= x, measure.vars = c('q1', 'q2', 'q3', 'q4', 'q5'))
+  return( data.melt )
 }
 ```
 The first step of starting the analysis is to the load the data. The dataset utilized in this project is a deemographic data set that breakdown information by factors such as age, income, cost of food, cost of healthcare, and etc. As mentioned above the focus of this analysis is the cost of healthcare as associated with age. The data is in a simple csv file and does contain a header therefore we use the read.csv function and set header = True so that it is included appropriately in the dataframe. 
 ```{r echo = FALSE,fig.width=8, fig.height=6, dpi=100, fig.align='center'}
 
 # The first step will be to load the data file. 
-# The focus of the analysis will be to look at living costs when compared to age of the interviewee 
+# The focus of the analysis will be to look at healthcare costs when compared to age of the interviewee 
 
-#Import the data file `midterm-dataset.csv`, which should be in the same directory as this markdown file (which should also be your working directory). It is a data frame of expenditures by household from the consumer expenditure survey
-demographic_dataset = read.csv(file = 'dataset/midterm-dataset.csv', header = TRUE)
+# Load the data file
+demographic_dataset <- read.csv(file = 'dataset/midterm-dataset.csv', header = TRUE)
 ```
 After the data has been imported lm is used to create a simple linear model. After the linear model as been created ggplot is used to create a graph of linear model. Doing this will provide a first picture of the data and give initial indication of extreme data points or trends to be aware of when qualifying the data. 
 ```{r echo = FALSE, message = FALSE, warning = FALSE, fig.width=8, fig.height=6, dpi=100, fig.align='center'}
-#First create a simple lm with healthcare as a function of age.interviewee
-agetohealthcost = lm(formula = healthcare ~ age.interviewee, data = demographic_dataset)
+agetohealthcost <- lm(formula = healthcare ~ age.interviewee, data = demographic_dataset)
 #from here plot the data to have a starting point
-agetohealthcost.plot = ggplot(data=demographic_dataset, mapping=aes(x=age.interviewee, y=healthcare)) + geom_point()
-agetohealthcost.plot + geom_smooth(method='lm') + 
+agetohealthcost.plot <- ggplot(data=demographic_dataset, mapping=aes(x=age.interviewee, y=healthcare)) + geom_point()
+agetohealthcost.plot + geom_smooth(method ='lm') + 
 labs(x = 'Interview Age', y='Healthcare')
 ggsave(agetohealthcost.plot, filename = "../results/agetohealthcost.png")
 ```
